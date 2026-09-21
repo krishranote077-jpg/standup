@@ -181,6 +181,45 @@
                             <span class="px-2.5 py-1 rounded-md bg-purple-950/60 border border-purple-800/40 text-purple-300">Strict Light</span>
                         </div>
 
+                        <!-- LIVE CROWD RATING FOR ON-STAGE COMEDIAN -->
+                        <div id="live-rating-card" class="p-4 bg-purple-950/50 rounded-2xl border border-purple-800/50 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-stage-gold uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="ph-bold ph-star text-stage-gold"></i> Live Set Rating
+                                </span>
+                                <span id="current-rating-badge" class="text-xs font-bold text-purple-200 bg-purple-900/60 px-2 py-0.5 rounded-lg border border-purple-700/50">
+                                    ⭐ 0.0 (0 votes)
+                                </span>
+                            </div>
+                            <!-- 5 Interactive Stars -->
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs text-purple-300/80 mr-1 font-medium">Score:</span>
+                                <div class="flex items-center gap-1" id="live-stars-group">
+                                    <button type="button" onclick="rateActivePerformer(1)" class="text-xl text-slate-600 hover:text-stage-gold transition transform hover:scale-125" title="1 Star">★</button>
+                                    <button type="button" onclick="rateActivePerformer(2)" class="text-xl text-slate-600 hover:text-stage-gold transition transform hover:scale-125" title="2 Stars">★</button>
+                                    <button type="button" onclick="rateActivePerformer(3)" class="text-xl text-slate-600 hover:text-stage-gold transition transform hover:scale-125" title="3 Stars">★</button>
+                                    <button type="button" onclick="rateActivePerformer(4)" class="text-xl text-slate-600 hover:text-stage-gold transition transform hover:scale-125" title="4 Stars">★</button>
+                                    <button type="button" onclick="rateActivePerformer(5)" class="text-xl text-slate-600 hover:text-stage-gold transition transform hover:scale-125" title="5 Stars">★</button>
+                                </div>
+                                <span id="rating-feedback-msg" class="text-xs text-stage-green font-bold ml-2 hidden">Voted! 🎉</span>
+                            </div>
+                            <!-- Quick Vibe Reactions -->
+                            <div class="flex flex-wrap gap-1.5 pt-1">
+                                <button type="button" onclick="rateActivePerformer(5, '😂 Hilarious')" class="text-[11px] px-2 py-1 rounded-lg bg-purple-900/40 hover:bg-purple-800 text-purple-200 border border-purple-700/40 transition flex items-center gap-1">
+                                    😂 Hilarious (5★)
+                                </button>
+                                <button type="button" onclick="rateActivePerformer(4, '🔥 Fire Set')" class="text-[11px] px-2 py-1 rounded-lg bg-purple-900/40 hover:bg-purple-800 text-purple-200 border border-purple-700/40 transition flex items-center gap-1">
+                                    🔥 Fire (4★)
+                                </button>
+                                <button type="button" onclick="rateActivePerformer(4, '👏 Great Crowdwork')" class="text-[11px] px-2 py-1 rounded-lg bg-purple-900/40 hover:bg-purple-800 text-purple-200 border border-purple-700/40 transition flex items-center gap-1">
+                                    👏 Crowdwork (4★)
+                                </button>
+                                <button type="button" onclick="rateActivePerformer(3, '👍 Solid')" class="text-[11px] px-2 py-1 rounded-lg bg-purple-900/40 hover:bg-purple-800 text-purple-200 border border-purple-700/40 transition flex items-center gap-1">
+                                    👍 Solid (3★)
+                                </button>
+                            </div>
+                        </div>
+
                         <!-- TELEPROMPTER TOGGLE -->
                         <div class="pt-2">
                             <button onclick="toggleTeleprompter(true)" class="inline-flex items-center gap-2 text-sm font-semibold text-stage-gold hover:text-white transition-colors bg-stage-gold/10 px-4 py-2 rounded-xl border border-stage-gold/30 hover:bg-stage-gold/20">
@@ -549,6 +588,24 @@
                 </div>
             </div>
 
+            <!-- AUDIENCE RATING LEADERBOARD WIDGET -->
+            <div class="bg-stage-card border border-purple-900/30 rounded-2xl p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-purple-900/30 pb-3">
+                    <div>
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="ph-bold ph-trophy text-stage-gold"></i> Top Rated Comedians of the Night
+                        </h3>
+                        <p class="text-xs text-purple-300/70">Ranked by real-time audience laugh scores & reviews</p>
+                    </div>
+                    <span id="stat-total-ratings" class="text-xs font-bold text-stage-gold bg-stage-gold/10 px-3 py-1 rounded-full border border-stage-gold/30">
+                        0 Total Votes
+                    </span>
+                </div>
+                <div id="producer-leaderboard-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Leaderboard cards loaded dynamically -->
+                </div>
+            </div>
+
             <!-- PRODUCER LINEUP MASTER TABLE -->
             <div class="bg-stage-card border border-purple-900/30 rounded-2xl p-6 space-y-6">
                 <div class="flex flex-wrap items-center justify-between gap-4 border-b border-purple-900/30 pb-4">
@@ -581,6 +638,7 @@
                                 <th class="p-3 rounded-l-xl">Time Slot</th>
                                 <th class="p-3">Performer</th>
                                 <th class="p-3">Genre</th>
+                                <th class="p-3">Rating</th>
                                 <th class="p-3">Notes</th>
                                 <th class="p-3">Status</th>
                                 <th class="p-3 rounded-r-xl text-right">Actions</th>
@@ -704,6 +762,68 @@
         </div>
     </div>
 
+    <!-- ================= MODAL 3: COMEDIAN RATING MODAL ================= -->
+    <div id="modal-rating" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-stage-card border border-purple-900/50 w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 relative shadow-2xl">
+            <button onclick="closeRatingModal()" class="absolute top-5 right-5 text-purple-400 hover:text-white text-xl">
+                <i class="ph-bold ph-x"></i>
+            </button>
+
+            <div class="space-y-1">
+                <span class="text-xs font-bold uppercase tracking-wider text-stage-gold">Audience & Host Feedback</span>
+                <h3 id="rating-modal-performer" class="text-2xl font-black text-white">Rate Comedian</h3>
+                <p id="rating-modal-meta" class="text-xs text-purple-300/70">Drop your score and reaction for tonight's set</p>
+            </div>
+
+            <form id="rating-modal-form" onsubmit="handleRatingSubmit(event)" class="space-y-5">
+                <input type="hidden" id="rating-modal-slot-id" value="">
+
+                <!-- Interactive Star Selector -->
+                <div class="flex flex-col items-center justify-center p-4 bg-stage-dark/80 rounded-2xl border border-purple-900/40">
+                    <span class="text-xs font-bold text-purple-300 uppercase tracking-wider mb-2">Select Star Rating</span>
+                    <div class="flex items-center gap-2 text-3xl cursor-pointer" id="rating-modal-stars">
+                        <button type="button" onclick="setModalScore(1)" class="modal-star text-slate-600 hover:text-stage-gold transition transform hover:scale-125">★</button>
+                        <button type="button" onclick="setModalScore(2)" class="modal-star text-slate-600 hover:text-stage-gold transition transform hover:scale-125">★</button>
+                        <button type="button" onclick="setModalScore(3)" class="modal-star text-slate-600 hover:text-stage-gold transition transform hover:scale-125">★</button>
+                        <button type="button" onclick="setModalScore(4)" class="modal-star text-slate-600 hover:text-stage-gold transition transform hover:scale-125">★</button>
+                        <button type="button" onclick="setModalScore(5)" class="modal-star text-slate-600 hover:text-stage-gold transition transform hover:scale-125">★</button>
+                    </div>
+                    <span id="rating-score-label" class="text-sm font-extrabold text-stage-gold mt-2">5.0 / 5.0 (Awesome!)</span>
+                </div>
+
+                <!-- Highlight Vibe Tags -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-purple-200 uppercase tracking-wider">Set Highlight / Reaction</label>
+                    <div class="grid grid-cols-2 gap-2" id="rating-vibe-buttons">
+                        <button type="button" onclick="selectModalVibe('😂 Killer Punchlines')" class="vibe-btn p-2 rounded-xl text-xs font-semibold bg-purple-950/60 border border-purple-800/40 text-purple-200 hover:border-stage-gold transition text-left">
+                            😂 Killer Punchlines
+                        </button>
+                        <button type="button" onclick="selectModalVibe('🔥 Crowd Favorite')" class="vibe-btn p-2 rounded-xl text-xs font-semibold bg-purple-950/60 border border-purple-800/40 text-purple-200 hover:border-stage-gold transition text-left">
+                            🔥 Crowd Favorite
+                        </button>
+                        <button type="button" onclick="selectModalVibe('👏 Great Crowdwork')" class="vibe-btn p-2 rounded-xl text-xs font-semibold bg-purple-950/60 border border-purple-800/40 text-purple-200 hover:border-stage-gold transition text-left">
+                            👏 Great Crowdwork
+                        </button>
+                        <button type="button" onclick="selectModalVibe('🎭 Witty Storytelling')" class="vibe-btn p-2 rounded-xl text-xs font-semibold bg-purple-950/60 border border-purple-800/40 text-purple-200 hover:border-stage-gold transition text-left">
+                            🎭 Storytelling
+                        </button>
+                    </div>
+                    <input type="hidden" id="rating-selected-vibe" value="😂 Killer Punchlines">
+                </div>
+
+                <!-- Review Note -->
+                <div>
+                    <label class="block text-xs font-bold text-purple-200 uppercase tracking-wider mb-1">Feedback / Favorite Bit (Optional)</label>
+                    <input type="text" id="rating-comment" placeholder="e.g. The joke about the subway had everyone dying!" class="w-full bg-stage-dark border border-purple-900/60 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-stage-gold">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-stage-gold to-amber-500 hover:from-amber-400 hover:to-amber-600 text-slate-950 font-extrabold rounded-xl shadow-neon-gold transition flex items-center justify-center gap-2">
+                    <i class="ph-bold ph-star text-lg"></i> Submit Comedian Rating
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- ================= FULLSCREEN STAGE TELEPROMPTER / LIGHT INDICATOR ================= -->
     <div id="teleprompter-overlay" class="fixed inset-0 bg-slate-950 z-50 flex flex-col justify-between p-8 sm:p-16 hidden">
         <div class="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -742,18 +862,18 @@
     <script>
         // ================= STATE & INITIAL DATA STRUCTURES =================
         const INITIAL_SLOTS = [
-            { id: 'slot-1', time: '08:00 PM', performer: 'Dave Chappelle Demo', genre: 'Observational', notes: 'Standard mic', status: 'Booked', passcode: '1234' },
-            { id: 'slot-2', time: '08:05 PM', performer: 'Ali Wong Demo', genre: 'Storytelling', notes: 'Mic stand high', status: 'Booked', passcode: '1234' },
-            { id: 'slot-3', time: '08:10 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '' },
-            { id: 'slot-4', time: '08:15 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '' },
-            { id: 'slot-5', time: '08:20 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '' },
-            { id: 'slot-6', time: '08:25 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '' },
-            { id: 'slot-7', time: '08:30 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '' },
-            { id: 'slot-8', time: '08:35 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '' },
-            { id: 'slot-9', time: '08:40 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '' },
-            { id: 'slot-10', time: '08:45 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '' },
-            { id: 'slot-11', time: '08:50 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '' },
-            { id: 'slot-12', time: '08:55 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '' }
+            { id: 'slot-1', time: '08:00 PM', performer: 'Dave Chappelle Demo', genre: 'Observational', notes: 'Standard mic', status: 'Booked', passcode: '1234', ratings: [5, 5, 5, 4], reviews: ['Killed with the opening bit! 🔥'] },
+            { id: 'slot-2', time: '08:05 PM', performer: 'Ali Wong Demo', genre: 'Storytelling', notes: 'Mic stand high', status: 'Booked', passcode: '1234', ratings: [5, 4, 5, 4], reviews: ['Hilarious crowdwork! 😂'] },
+            { id: 'slot-3', time: '08:10 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '', ratings: [], reviews: [] },
+            { id: 'slot-4', time: '08:15 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '', ratings: [], reviews: [] },
+            { id: 'slot-5', time: '08:20 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '', ratings: [], reviews: [] },
+            { id: 'slot-6', time: '08:25 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '', ratings: [], reviews: [] },
+            { id: 'slot-7', time: '08:30 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '', ratings: [], reviews: [] },
+            { id: 'slot-8', time: '08:35 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '', ratings: [], reviews: [] },
+            { id: 'slot-9', time: '08:40 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '', ratings: [], reviews: [] },
+            { id: 'slot-10', time: '08:45 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '', ratings: [], reviews: [] },
+            { id: 'slot-11', time: '08:50 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '', ratings: [], reviews: [] },
+            { id: 'slot-12', time: '08:55 PM', performer: '', genre: '', notes: '', status: 'Available', passcode: '', ratings: [], reviews: [] }
         ];
 
         const INITIAL_RESERVATIONS = [
@@ -764,6 +884,56 @@
         let slotsData = [];
         let reservationsData = [];
         let activePerformerSlot = null;
+
+        // RATING HELPERS
+        function getRatingData(slot) {
+            if (!slot || !slot.ratings || slot.ratings.length === 0) {
+                return { avg: 0, count: 0, formattedAvg: '0.0', starsText: '☆☆☆☆☆' };
+            }
+            const sum = slot.ratings.reduce((acc, curr) => acc + Number(curr), 0);
+            const avg = (sum / slot.ratings.length).toFixed(1);
+            const rounded = Math.round(Number(avg));
+            const starsText = '★'.repeat(rounded) + '☆'.repeat(5 - rounded);
+            return {
+                avg: Number(avg),
+                count: slot.ratings.length,
+                formattedAvg: avg,
+                starsText: starsText
+            };
+        }
+
+        function updateLiveRatingUI() {
+            const badge = document.getElementById('current-rating-badge');
+            if (!badge) return;
+            if (!activePerformerSlot || !activePerformerSlot.performer) {
+                badge.innerText = '⭐ 0.0 (Stage Empty)';
+                return;
+            }
+            const stats = getRatingData(activePerformerSlot);
+            badge.innerText = `⭐ ${stats.formattedAvg} (${stats.count} ${stats.count === 1 ? 'vote' : 'votes'})`;
+        }
+
+        function rateActivePerformer(score, vibe = '') {
+            if (!activePerformerSlot || !activePerformerSlot.performer) {
+                alert("No performer is currently on stage! Click 'Call Stage' on any queued comedian first.");
+                return;
+            }
+            if (!Array.isArray(activePerformerSlot.ratings)) activePerformerSlot.ratings = [];
+            if (!Array.isArray(activePerformerSlot.reviews)) activePerformerSlot.reviews = [];
+
+            activePerformerSlot.ratings.push(score);
+            if (vibe) activePerformerSlot.reviews.push(vibe);
+            saveSlotsData();
+            renderAllViews();
+
+            const feedback = document.getElementById('rating-feedback-msg');
+            if (feedback) {
+                feedback.innerText = `+${score}★ Voted! 🎉`;
+                feedback.classList.remove('hidden');
+                setTimeout(() => feedback.classList.add('hidden'), 2200);
+            }
+            playChimeSound('bell');
+        }
 
         // TIMER STATE
         let timerSeconds = 300; // 5 Mins (300 seconds)
@@ -793,6 +963,11 @@
 
             if (savedSlots) {
                 slotsData = JSON.parse(savedSlots);
+                // Ensure backward compatibility with ratings
+                slotsData.forEach(s => {
+                    if (!Array.isArray(s.ratings)) s.ratings = [];
+                    if (!Array.isArray(s.reviews)) s.reviews = [];
+                });
             } else {
                 slotsData = [...INITIAL_SLOTS];
                 saveSlotsData();
@@ -815,7 +990,7 @@
         }
 
         function resetAllDemoData() {
-            if (confirm("Reset all slots and ticket reservations back to default demo data?")) {
+            if (confirm("Reset all slots, ratings, and ticket reservations back to default demo data?")) {
                 localStorage.removeItem('velvet_mic_slots');
                 localStorage.removeItem('velvet_mic_reservations');
                 slotsData = [...INITIAL_SLOTS];
@@ -830,9 +1005,11 @@
             renderSlotPicker();
             renderQueueList();
             renderBookingsTable();
+            renderLeaderboard();
             renderProducerTable();
             renderCapacityMap();
             renderAudienceManifest();
+            updateLiveRatingUI();
             updateMetrics();
         }
 
@@ -1046,22 +1223,34 @@
                 return;
             }
 
-            queueContainer.innerHTML = bookedSlots.map(slot => `
-                <div class="flex items-center justify-between p-4 rounded-xl ${slot.status === 'Onstage' ? 'bg-purple-950/80 border-2 border-stage-gold' : 'bg-stage-dark border border-purple-900/40'} transition">
+            queueContainer.innerHTML = bookedSlots.map(slot => {
+                const rStats = getRatingData(slot);
+                const latestReview = slot.reviews && slot.reviews.length ? slot.reviews[slot.reviews.length - 1] : null;
+                return `
+                <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl ${slot.status === 'Onstage' ? 'bg-purple-950/80 border-2 border-stage-gold' : 'bg-stage-dark border border-purple-900/40'} transition">
                     <div class="flex items-center gap-3">
                         <span class="font-mono text-xs font-bold text-stage-gold bg-purple-900/30 px-2.5 py-1 rounded-md border border-purple-800/40">
                             ${slot.time}
                         </span>
                         <div>
-                            <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                                ${slot.performer}
+                            <div class="flex items-center gap-2">
+                                <h4 class="text-sm font-bold text-white">${slot.performer}</h4>
                                 ${slot.status === 'Onstage' ? '<span class="text-[10px] bg-red-900/60 text-stage-red border border-red-700/50 px-2 py-0.5 rounded-full font-bold animate-pulse">ONSTAGE</span>' : ''}
-                            </h4>
-                            <p class="text-xs text-purple-300/70">${slot.genre} • ${slot.notes || 'No special notes'}</p>
+                                <span class="text-xs font-bold text-stage-gold flex items-center gap-1 bg-stage-gold/10 px-2 py-0.5 rounded border border-stage-gold/20">
+                                    ⭐ ${rStats.formattedAvg} <span class="text-[10px] text-purple-300 font-normal">(${rStats.count})</span>
+                                </span>
+                            </div>
+                            <p class="text-xs text-purple-300/70 mt-0.5">
+                                ${slot.genre} • ${slot.notes || 'No notes'}
+                                ${latestReview ? `<span class="italic text-purple-400 ml-1">"${latestReview}"</span>` : ''}
+                            </p>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2">
+                        <button onclick="openRatingModal('${slot.id}')" class="px-3 py-1.5 bg-purple-900/40 hover:bg-purple-900/70 text-purple-200 border border-purple-700/40 font-bold text-xs rounded-lg transition flex items-center gap-1">
+                            <i class="ph-bold ph-star text-stage-gold"></i> Rate
+                        </button>
                         ${slot.status !== 'Onstage' ? `
                             <button onclick="callStage('${slot.id}')" class="px-3 py-1.5 bg-stage-gold hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg shadow transition flex items-center gap-1">
                                 <i class="ph-bold ph-microphone"></i> Call Stage
@@ -1073,7 +1262,7 @@
                         `}
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         // ================= COMEDIAN BOOKING PORTAL =================
@@ -1181,15 +1370,25 @@
                 return;
             }
 
-            container.innerHTML = matches.map(s => `
+            container.innerHTML = matches.map(s => {
+                const r = getRatingData(s);
+                return `
                 <div class="p-2.5 bg-stage-dark border border-purple-900/30 rounded-xl flex justify-between items-center text-xs">
                     <div>
-                        <span class="font-bold text-white block">${s.performer}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-white">${s.performer}</span>
+                            <span class="text-[11px] text-stage-gold font-bold">⭐ ${r.formattedAvg}</span>
+                        </div>
                         <span class="text-purple-300/70">${s.time} • ${s.genre}</span>
                     </div>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${s.status === 'Onstage' ? 'bg-red-950 text-stage-red border border-red-800' : 'bg-purple-900/40 text-purple-300'}">${s.status}</span>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="openRatingModal('${s.id}')" class="px-2 py-0.5 bg-purple-900/40 hover:bg-purple-800 text-stage-gold text-[10px] font-bold rounded border border-purple-700/40 transition">
+                            Rate
+                        </button>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${s.status === 'Onstage' ? 'bg-red-950 text-stage-red border border-red-800' : 'bg-purple-900/40 text-purple-300'}">${s.status}</span>
+                    </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         // ================= AUDIENCE & SEATING CAPACITY =================
@@ -1323,14 +1522,85 @@
             document.getElementById('capacity-progress-bar').style.width = `${Math.min(capacityPct, 100)}%`;
         }
 
+        // ================= AUDIENCE RATING LEADERBOARD =================
+        function renderLeaderboard() {
+            const container = document.getElementById('producer-leaderboard-grid');
+            const totalVotesBadge = document.getElementById('stat-total-ratings');
+            if (!container) return;
+
+            const ratedComedians = slotsData
+                .filter(s => s.performer)
+                .map(s => {
+                    const r = getRatingData(s);
+                    return { ...s, ratingAvg: r.avg, ratingCount: r.count, formattedAvg: r.formattedAvg };
+                })
+                .sort((a, b) => b.ratingAvg - a.ratingAvg || b.ratingCount - a.ratingCount);
+
+            const totalVotes = slotsData.reduce((acc, s) => acc + (s.ratings ? s.ratings.length : 0), 0);
+            if (totalVotesBadge) totalVotesBadge.innerText = `${totalVotes} Total Audience Votes`;
+
+            if (ratedComedians.length === 0 || totalVotes === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full p-6 text-center text-xs text-purple-400 border border-dashed border-purple-900/40 rounded-xl">
+                        No ratings submitted yet tonight. Use the star buttons or "Rate" options to score sets!
+                    </div>
+                `;
+                return;
+            }
+
+            const medals = ['🥇 1st Place (Crowd Favorite)', '🥈 2nd Place', '🥉 3rd Place'];
+            const medalStyles = [
+                'border-stage-gold/80 bg-gradient-to-b from-stage-gold/15 to-purple-950/40 shadow-neon-gold',
+                'border-slate-400/60 bg-gradient-to-b from-slate-400/10 to-purple-950/40',
+                'border-amber-700/60 bg-gradient-to-b from-amber-700/10 to-purple-950/40'
+            ];
+
+            container.innerHTML = ratedComedians.slice(0, 3).map((c, i) => {
+                const latestReview = c.reviews && c.reviews.length ? c.reviews[c.reviews.length - 1] : null;
+                return `
+                <div class="p-4 rounded-2xl border ${medalStyles[i] || 'border-purple-900/40 bg-stage-dark'} space-y-3 transition transform hover:-translate-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-stage-gold">${medals[i] || `#${i+1}`}</span>
+                        <span class="text-base font-black text-white flex items-center gap-1 bg-stage-dark/80 px-2.5 py-0.5 rounded-lg border border-purple-800/40">
+                            ⭐ ${c.formattedAvg}
+                        </span>
+                    </div>
+                    <div>
+                        <h4 class="text-base font-extrabold text-white">${c.performer}</h4>
+                        <p class="text-xs text-purple-300/70">${c.genre} • ${c.time} Slot</p>
+                        ${latestReview ? `<p class="text-[11px] text-purple-300 italic mt-1 bg-purple-950/60 p-1.5 rounded-lg border border-purple-900/50">"${latestReview}"</p>` : ''}
+                    </div>
+                    <div class="pt-2 border-t border-purple-900/40 flex items-center justify-between text-xs">
+                        <span class="text-purple-400 font-medium">${c.ratingCount} ${c.ratingCount === 1 ? 'vote' : 'votes'}</span>
+                        <button onclick="openRatingModal('${c.id}')" class="text-stage-gold hover:text-white font-bold flex items-center gap-1 transition">
+                            <i class="ph-bold ph-plus-circle"></i> Add Rating
+                        </button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
         function renderProducerTable() {
             const tbody = document.getElementById('producer-lineup-tbody');
             
-            tbody.innerHTML = slotsData.map(s => `
+            tbody.innerHTML = slotsData.map(s => {
+                const r = getRatingData(s);
+                return `
                 <tr class="hover:bg-purple-950/20 transition">
                     <td class="p-3 font-mono font-bold text-stage-gold">${s.time}</td>
                     <td class="p-3 font-bold text-white">${s.performer || '<span class="text-purple-500 font-normal">Unbooked</span>'}</td>
                     <td class="p-3 text-xs text-purple-300">${s.genre || '-'}</td>
+                    <td class="p-3">
+                        ${s.performer ? `
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-bold text-xs text-stage-gold">⭐ ${r.formattedAvg}</span>
+                                <span class="text-[10px] text-purple-400">(${r.count})</span>
+                                <button type="button" onclick="openRatingModal('${s.id}')" class="ml-1 px-2 py-0.5 rounded bg-purple-900/50 hover:bg-purple-800 text-[10px] font-bold text-purple-200 hover:text-white border border-purple-700/50 transition">
+                                    Rate
+                                </button>
+                            </div>
+                        ` : '-'}
+                    </td>
                     <td class="p-3 text-xs text-purple-300/70">${s.notes || '-'}</td>
                     <td class="p-3">
                         <span class="px-2 py-0.5 rounded text-xs font-bold ${
@@ -1347,7 +1617,7 @@
                         ` : '-'}
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         function clearSlot(slotId) {
@@ -1357,9 +1627,93 @@
                 slot.genre = '';
                 slot.notes = '';
                 slot.status = 'Available';
+                slot.ratings = [];
+                slot.reviews = [];
                 saveSlotsData();
                 renderAllViews();
             }
+        }
+
+        // ================= RATING MODAL CONTROLS =================
+        let currentModalRatingScore = 5;
+
+        function openRatingModal(slotId) {
+            const slot = slotsData.find(s => s.id === slotId);
+            if (!slot || !slot.performer) return;
+
+            document.getElementById('rating-modal-slot-id').value = slotId;
+            document.getElementById('rating-modal-performer').innerText = `Rate ${slot.performer}`;
+            document.getElementById('rating-modal-meta').innerText = `${slot.time} • ${slot.genre} Set`;
+            document.getElementById('rating-comment').value = '';
+            setModalScore(5);
+            selectModalVibe('😂 Killer Punchlines');
+
+            document.getElementById('modal-rating').classList.remove('hidden');
+        }
+
+        function closeRatingModal() {
+            document.getElementById('modal-rating').classList.add('hidden');
+        }
+
+        function setModalScore(score) {
+            currentModalRatingScore = score;
+            const stars = document.querySelectorAll('#rating-modal-stars .modal-star');
+            stars.forEach((btn, idx) => {
+                if (idx < score) {
+                    btn.classList.add('text-stage-gold');
+                    btn.classList.remove('text-slate-600');
+                } else {
+                    btn.classList.remove('text-stage-gold');
+                    btn.classList.add('text-slate-600');
+                }
+            });
+            const label = document.getElementById('rating-score-label');
+            const descriptions = [
+                '',
+                '1.0 / 5.0 (Tough Room)',
+                '2.0 / 5.0 (Needs Polish)',
+                '3.0 / 5.0 (Solid Set)',
+                '4.0 / 5.0 (Great Laughs!)',
+                '5.0 / 5.0 (Absolute Killer! 🔥)'
+            ];
+            if (label) label.innerText = descriptions[score] || `${score}.0 / 5.0`;
+        }
+
+        function selectModalVibe(vibe) {
+            document.getElementById('rating-selected-vibe').value = vibe;
+            document.querySelectorAll('#rating-vibe-buttons .vibe-btn').forEach(btn => {
+                if (btn.innerText.includes(vibe) || btn.innerText.trim() === vibe.trim()) {
+                    btn.classList.add('border-stage-gold', 'bg-purple-900/80', 'text-white');
+                    btn.classList.remove('bg-purple-950/60', 'text-purple-200');
+                } else {
+                    btn.classList.remove('border-stage-gold', 'bg-purple-900/80', 'text-white');
+                    btn.classList.add('bg-purple-950/60', 'text-purple-200');
+                }
+            });
+        }
+
+        function handleRatingSubmit(e) {
+            e.preventDefault();
+            const slotId = document.getElementById('rating-modal-slot-id').value;
+            const slot = slotsData.find(s => s.id === slotId);
+            if (!slot) return;
+
+            if (!Array.isArray(slot.ratings)) slot.ratings = [];
+            if (!Array.isArray(slot.reviews)) slot.reviews = [];
+
+            slot.ratings.push(currentModalRatingScore);
+            const vibe = document.getElementById('rating-selected-vibe').value;
+            const comment = document.getElementById('rating-comment').value.trim();
+            if (comment) {
+                slot.reviews.push(`${vibe}: "${comment}"`);
+            } else if (vibe) {
+                slot.reviews.push(vibe);
+            }
+
+            saveSlotsData();
+            renderAllViews();
+            closeRatingModal();
+            playChimeSound('bell');
         }
 
         function triggerRafflePicker() {
@@ -1396,15 +1750,17 @@
                     toggleTeleprompter(false);
                     closeTicketModal();
                     closeDigitalPassModal();
+                    closeRatingModal();
                 }
             });
         }
 
         // DATA EXPORTS
         function exportDataCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,Time,Performer,Genre,Notes,Status\n";
+            let csvContent = "data:text/csv;charset=utf-8,Time,Performer,Genre,AvgRating,Votes,Notes,Status\n";
             slotsData.forEach(s => {
-                csvContent += `"${s.time}","${s.performer}","${s.genre}","${s.notes}","${s.status}"\n`;
+                const r = getRatingData(s);
+                csvContent += `"${s.time}","${s.performer}","${s.genre}","${r.formattedAvg}","${r.count}","${s.notes}","${s.status}"\n`;
             });
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
