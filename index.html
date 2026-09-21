@@ -112,16 +112,19 @@
 
             <!-- NAVIGATION TABS -->
             <nav class="hidden md:flex space-x-1 bg-stage-card p-1.5 rounded-xl border border-purple-900/30">
-                <button onclick="switchTab('backstage')" id="tab-btn-backstage" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all">
-                    <i class="ph-bold ph-broadcast text-lg"></i> Backstage & Stage Timer
+                <button onclick="switchTab('backstage')" id="tab-btn-backstage" class="tab-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all">
+                    <i class="ph-bold ph-broadcast text-lg"></i> Backstage & Timer
                 </button>
-                <button onclick="switchTab('performer')" id="tab-btn-performer" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all">
+                <button onclick="switchTab('ratings')" id="tab-btn-ratings" class="tab-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all text-stage-gold hover:text-white">
+                    <i class="ph-bold ph-star text-stage-gold text-lg"></i> Rate Comedians
+                </button>
+                <button onclick="switchTab('performer')" id="tab-btn-performer" class="tab-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all">
                     <i class="ph-bold ph-user-list text-lg"></i> Comedian Booking
                 </button>
-                <button onclick="switchTab('audience')" id="tab-btn-audience" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all">
-                    <i class="ph-bold ph-ticket text-lg"></i> Audience & Seating
+                <button onclick="switchTab('audience')" id="tab-btn-audience" class="tab-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all">
+                    <i class="ph-bold ph-ticket text-lg"></i> Seating
                 </button>
-                <button onclick="switchTab('producer')" id="tab-btn-producer" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all">
+                <button onclick="switchTab('producer')" id="tab-btn-producer" class="tab-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all">
                     <i class="ph-bold ph-chart-bar text-lg"></i> Host Dashboard
                 </button>
             </nav>
@@ -136,6 +139,9 @@
         <div id="mobile-nav" class="hidden md:hidden bg-stage-card border-b border-purple-900/40 px-4 py-3 space-y-2">
             <button onclick="switchTab('backstage'); toggleMobileNav();" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:bg-purple-900/30">
                 <i class="ph-bold ph-broadcast text-lg text-stage-gold"></i> Backstage & Stage Timer
+            </button>
+            <button onclick="switchTab('ratings'); toggleMobileNav();" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-stage-gold hover:bg-purple-900/30">
+                <i class="ph-bold ph-star text-lg text-stage-gold"></i> ⭐ Rate Comedians & Voting
             </button>
             <button onclick="switchTab('performer'); toggleMobileNav();" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:bg-purple-900/30">
                 <i class="ph-bold ph-user-list text-lg text-stage-purple"></i> Comedian Booking
@@ -652,6 +658,129 @@
             </div>
         </div>
 
+        <!-- ================= TAB 5: AUDIENCE RATING & VOTING PORTAL ================= -->
+        <div id="view-ratings" class="tab-content hidden space-y-8">
+            <!-- HERO BANNER -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-950 via-stage-card to-purple-950 border-2 border-stage-gold/40 p-6 sm:p-8 shadow-2xl">
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="space-y-2 max-w-xl">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stage-gold/10 border border-stage-gold/30 text-stage-gold text-xs font-bold uppercase tracking-widest">
+                            <i class="ph-bold ph-star text-stage-gold"></i> Live Crowd Voting
+                        </div>
+                        <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                            Audience Rating & Laugh-O-Meter 🎙️
+                        </h2>
+                        <p class="text-sm text-purple-200/80">
+                            Give your real-time score to tonight's performers. Every vote helps decide who wins the <strong>Fan Favorite Crown</strong>!
+                        </p>
+                    </div>
+
+                    <!-- TOTAL VOTES COUNTER -->
+                    <div class="bg-stage-dark/90 border border-purple-900/60 p-5 rounded-2xl text-center min-w-[180px] shadow-inner">
+                        <span class="text-xs text-purple-300 font-semibold block uppercase tracking-wider">Total Show Votes</span>
+                        <span id="ratings-tab-total-votes" class="text-3xl sm:text-4xl font-black text-stage-gold">0</span>
+                        <span class="text-[11px] text-purple-400 block mt-1">Live Crowd Feedback</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOTE SUBMISSION CARD -->
+            <div class="bg-stage-card border border-purple-900/40 rounded-3xl p-6 sm:p-8 space-y-6">
+                <div class="border-b border-purple-900/30 pb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="ph-bold ph-pencil-simple text-stage-gold"></i> Submit a Comedian Rating
+                    </h3>
+                    <p class="text-xs text-purple-300/70">Pick any comedian from tonight's lineup and tap your rating below</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <!-- LEFT: SELECTOR & FORM -->
+                    <div class="lg:col-span-7 space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold text-purple-200 uppercase tracking-wider mb-2">Select Comedian to Rate *</label>
+                            <select id="vote-comedian-select" onchange="onVoteSelectChange()" class="w-full bg-stage-dark border border-purple-900/60 rounded-xl px-4 py-3 text-white text-base font-semibold focus:outline-none focus:border-stage-gold">
+                                <!-- Options loaded dynamically -->
+                            </select>
+                        </div>
+
+                        <!-- 5 LARGE STARS -->
+                        <div class="p-5 bg-stage-dark/80 rounded-2xl border border-purple-900/40 text-center space-y-2">
+                            <span class="text-xs font-bold text-purple-300 uppercase tracking-wider block">Tap to Rate (1 to 5 Stars)</span>
+                            <div class="flex items-center justify-center gap-3 text-4xl cursor-pointer py-1" id="tab-vote-stars">
+                                <button type="button" onclick="setTabVoteScore(1)" class="tab-star text-stage-gold hover:scale-125 transition transform">★</button>
+                                <button type="button" onclick="setTabVoteScore(2)" class="tab-star text-stage-gold hover:scale-125 transition transform">★</button>
+                                <button type="button" onclick="setTabVoteScore(3)" class="tab-star text-stage-gold hover:scale-125 transition transform">★</button>
+                                <button type="button" onclick="setTabVoteScore(4)" class="tab-star text-stage-gold hover:scale-125 transition transform">★</button>
+                                <button type="button" onclick="setTabVoteScore(5)" class="tab-star text-stage-gold hover:scale-125 transition transform">★</button>
+                            </div>
+                            <span id="tab-vote-score-label" class="text-sm font-black text-stage-gold block">
+                                5.0 / 5.0 (Absolute Killer! 🔥)
+                            </span>
+                        </div>
+
+                        <!-- VIBE REACTIONS -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-purple-200 uppercase tracking-wider">Highlight Reaction / Crowd Vibe</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="tab-vibe-buttons">
+                                <button type="button" onclick="selectTabVibe('😂 Hilarious')" class="tab-vibe-btn p-2.5 rounded-xl text-xs font-bold bg-purple-900/80 border border-stage-gold text-white text-center">😂 Hilarious</button>
+                                <button type="button" onclick="selectTabVibe('🔥 Fire Set')" class="tab-vibe-btn p-2.5 rounded-xl text-xs font-bold bg-purple-950/60 border border-purple-800/40 text-purple-200 text-center hover:border-stage-gold">🔥 Fire Set</button>
+                                <button type="button" onclick="selectTabVibe('👏 Great Crowdwork')" class="tab-vibe-btn p-2.5 rounded-xl text-xs font-bold bg-purple-950/60 border border-purple-800/40 text-purple-200 text-center hover:border-stage-gold">👏 Crowdwork</button>
+                                <button type="button" onclick="selectTabVibe('👍 Solid')" class="tab-vibe-btn p-2.5 rounded-xl text-xs font-bold bg-purple-950/60 border border-purple-800/40 text-purple-200 text-center hover:border-stage-gold">👍 Solid</button>
+                            </div>
+                            <input type="hidden" id="tab-selected-vibe" value="😂 Hilarious">
+                        </div>
+
+                        <!-- COMMENT -->
+                        <div>
+                            <label class="block text-xs font-bold text-purple-200 uppercase tracking-wider mb-1">Favorite Joke / Feedback (Optional)</label>
+                            <input type="text" id="tab-vote-comment" placeholder="e.g. Loved the joke about dating apps!" class="w-full bg-stage-dark border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-stage-gold">
+                        </div>
+
+                        <button onclick="submitTabVote()" class="w-full py-4 bg-gradient-to-r from-stage-gold via-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-black text-base rounded-xl shadow-neon-gold transition flex items-center justify-center gap-2">
+                            <i class="ph-bold ph-check-circle text-xl"></i> Submit My Rating Now
+                        </button>
+                    </div>
+
+                    <!-- RIGHT: SELECTED COMEDIAN STATS PREVIEW -->
+                    <div class="lg:col-span-5 bg-stage-dark/90 border border-purple-900/50 rounded-2xl p-6 space-y-4 shadow-xl">
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-400 block">Current Standings Preview</span>
+                        <div>
+                            <h4 id="vote-preview-name" class="text-2xl font-black text-white">Comedian Name</h4>
+                            <p id="vote-preview-meta" class="text-xs text-purple-300 mt-0.5">8:00 PM • Observational Style</p>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-purple-950/50 rounded-xl border border-purple-800/40">
+                            <span id="vote-preview-score" class="text-3xl font-black text-stage-gold">⭐ 5.0</span>
+                            <div>
+                                <span id="vote-preview-count" class="text-xs font-bold text-white block">4 Total Ratings</span>
+                                <span class="text-[11px] text-stage-green font-semibold">Audience Approved</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5 pt-2">
+                            <span class="text-xs font-bold text-purple-300 uppercase tracking-wider block">Audience Highlights:</span>
+                            <div id="vote-preview-reviews" class="space-y-1 max-h-36 overflow-y-auto pr-1">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALL COMEDIANS CARDS & QUICK RATE GRID -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="ph-bold ph-cards text-stage-purple"></i> Tonight's Comedian Roster & Ratings
+                    </h3>
+                    <span class="text-xs text-purple-300/70">Click any card to rate directly</span>
+                </div>
+
+                <div id="ratings-tab-roster-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Comedian Roster with Ratings loaded dynamically -->
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- ================= MODAL 1: AUDIENCE TICKET BOOKING MODAL ================= -->
@@ -858,6 +987,12 @@
         <p>&copy; 2026 The Velvet Mic Comedy Club. Strict 5-Minute Open Mic System.</p>
     </footer>
 
+    <!-- FLOATING QUICK RATE BUTTON -->
+    <button onclick="switchTab('ratings')" class="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-stage-gold via-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-black px-5 py-3.5 rounded-full shadow-neon-gold flex items-center gap-2.5 text-sm border-2 border-white/20 hover:scale-105 transition transform shadow-2xl">
+        <i class="ph-fill ph-star text-xl text-slate-950"></i>
+        <span>⭐ Rate Comedians</span>
+    </button>
+
     <!-- APPLICATION JAVASCRIPT LOGIC -->
     <script>
         // ================= STATE & INITIAL DATA STRUCTURES =================
@@ -968,9 +1103,38 @@
                     if (!Array.isArray(s.ratings)) s.ratings = [];
                     if (!Array.isArray(s.reviews)) s.reviews = [];
                 });
+                // If stored slots has no ratings at all (cached from old visit), seed demo ratings:
+                const hasAnyRatings = slotsData.some(s => s.ratings && s.ratings.length > 0);
+                if (!hasAnyRatings) {
+                    if (slotsData[0] && slotsData[0].performer) {
+                        slotsData[0].ratings = [5, 5, 5, 4];
+                        slotsData[0].reviews = ['Killed with the opening bit! 🔥'];
+                    }
+                    if (slotsData[1] && slotsData[1].performer) {
+                        slotsData[1].ratings = [5, 4, 5, 4];
+                        slotsData[1].reviews = ['Hilarious crowdwork! 😂'];
+                    }
+                }
             } else {
                 slotsData = [...INITIAL_SLOTS];
                 saveSlotsData();
+            }
+
+            // Ensure first comedian is active onstage by default for immediate rating availability
+            const onstage = slotsData.find(s => s.status === 'Onstage');
+            if (onstage) {
+                activePerformerSlot = onstage;
+            } else {
+                const firstBooked = slotsData.find(s => s.status === 'Booked' && s.performer);
+                if (firstBooked) {
+                    firstBooked.status = 'Onstage';
+                    activePerformerSlot = firstBooked;
+                }
+            }
+            if (activePerformerSlot) {
+                document.getElementById('current-performer-name').innerText = activePerformerSlot.performer;
+                document.getElementById('current-performer-meta').innerText = `${activePerformerSlot.time} Slot • ${activePerformerSlot.genre} Style • Notes: ${activePerformerSlot.notes || 'None'}`;
+                document.getElementById('tele-performer-name').innerText = activePerformerSlot.performer;
             }
 
             if (savedReservations) {
@@ -1006,11 +1170,162 @@
             renderQueueList();
             renderBookingsTable();
             renderLeaderboard();
+            renderRatingsTab();
             renderProducerTable();
             renderCapacityMap();
             renderAudienceManifest();
             updateLiveRatingUI();
             updateMetrics();
+        }
+
+        // ================= RATINGS TAB ENGINE =================
+        let tabVoteScore = 5;
+
+        function setTabVoteScore(score) {
+            tabVoteScore = score;
+            const stars = document.querySelectorAll('#tab-vote-stars .tab-star');
+            stars.forEach((btn, idx) => {
+                if (idx < score) {
+                    btn.classList.add('text-stage-gold');
+                    btn.classList.remove('text-slate-600');
+                } else {
+                    btn.classList.remove('text-stage-gold');
+                    btn.classList.add('text-slate-600');
+                }
+            });
+            const label = document.getElementById('tab-vote-score-label');
+            const descriptions = [
+                '',
+                '1.0 / 5.0 (Tough Room)',
+                '2.0 / 5.0 (Needs Polish)',
+                '3.0 / 5.0 (Solid Set)',
+                '4.0 / 5.0 (Great Laughs!)',
+                '5.0 / 5.0 (Absolute Killer! 🔥)'
+            ];
+            if (label) label.innerText = descriptions[score] || `${score}.0 / 5.0`;
+        }
+
+        function selectTabVibe(vibe) {
+            document.getElementById('tab-selected-vibe').value = vibe;
+            document.querySelectorAll('#tab-vibe-buttons .tab-vibe-btn').forEach(btn => {
+                if (btn.innerText.includes(vibe) || btn.innerText.trim() === vibe.trim()) {
+                    btn.classList.add('border-stage-gold', 'bg-purple-900/80', 'text-white');
+                    btn.classList.remove('bg-purple-950/60', 'text-purple-200');
+                } else {
+                    btn.classList.remove('border-stage-gold', 'bg-purple-900/80', 'text-white');
+                    btn.classList.add('bg-purple-950/60', 'text-purple-200');
+                }
+            });
+        }
+
+        function onVoteSelectChange() {
+            const select = document.getElementById('vote-comedian-select');
+            if (!select) return;
+            const slotId = select.value;
+            const slot = slotsData.find(s => s.id === slotId);
+            if (!slot) return;
+
+            const rStats = getRatingData(slot);
+            document.getElementById('vote-preview-name').innerText = slot.performer;
+            document.getElementById('vote-preview-meta').innerText = `${slot.time} • ${slot.genre} Style`;
+            document.getElementById('vote-preview-score').innerText = `⭐ ${rStats.formattedAvg}`;
+            document.getElementById('vote-preview-count').innerText = `${rStats.count} Total Ratings`;
+
+            const revContainer = document.getElementById('vote-preview-reviews');
+            if (slot.reviews && slot.reviews.length > 0) {
+                revContainer.innerHTML = slot.reviews.slice(-4).reverse().map(rev => `
+                    <div class="text-[11px] p-2 rounded-lg bg-purple-950/70 border border-purple-900/60 text-purple-200 italic">
+                        "${rev}"
+                    </div>
+                `).join('');
+            } else {
+                revContainer.innerHTML = `<span class="text-xs text-purple-400">No audience quotes yet. Be the first to leave one!</span>`;
+            }
+        }
+
+        function submitTabVote() {
+            const select = document.getElementById('vote-comedian-select');
+            const slotId = select.value;
+            const slot = slotsData.find(s => s.id === slotId);
+            if (!slot || !slot.performer) {
+                alert("Please select a comedian to rate.");
+                return;
+            }
+
+            if (!Array.isArray(slot.ratings)) slot.ratings = [];
+            if (!Array.isArray(slot.reviews)) slot.reviews = [];
+
+            slot.ratings.push(tabVoteScore);
+            const vibe = document.getElementById('tab-selected-vibe').value;
+            const comment = document.getElementById('tab-vote-comment').value.trim();
+            if (comment) {
+                slot.reviews.push(`${vibe}: "${comment}"`);
+            } else if (vibe) {
+                slot.reviews.push(vibe);
+            }
+
+            saveSlotsData();
+            renderAllViews();
+            document.getElementById('tab-vote-comment').value = '';
+            alert(`🎉 Success! You rated ${slot.performer} ${tabVoteScore} Stars!`);
+            playChimeSound('bell');
+        }
+
+        function renderRatingsTab() {
+            const select = document.getElementById('vote-comedian-select');
+            const rosterGrid = document.getElementById('ratings-tab-roster-grid');
+            const totalVotesCount = document.getElementById('ratings-tab-total-votes');
+
+            const bookedComedians = slotsData.filter(s => s.performer);
+            const totalVotes = slotsData.reduce((acc, s) => acc + (s.ratings ? s.ratings.length : 0), 0);
+            if (totalVotesCount) totalVotesCount.innerText = totalVotes;
+
+            if (select) {
+                const currentVal = select.value;
+                select.innerHTML = bookedComedians.map(s => `
+                    <option value="${s.id}" ${s.id === currentVal ? 'selected' : ''}>
+                        ${s.performer} (${s.time} - ${s.genre})
+                    </option>
+                `).join('');
+                if (bookedComedians.length > 0) {
+                    onVoteSelectChange();
+                }
+            }
+
+            if (rosterGrid) {
+                if (bookedComedians.length === 0) {
+                    rosterGrid.innerHTML = `
+                        <div class="col-span-full p-8 text-center text-xs text-purple-400 border border-dashed border-purple-900/40 rounded-2xl">
+                            No comedians booked yet. Book a slot in the Comedian Booking tab!
+                        </div>
+                    `;
+                    return;
+                }
+
+                rosterGrid.innerHTML = bookedComedians.map(s => {
+                    const r = getRatingData(s);
+                    const latestRev = s.reviews && s.reviews.length ? s.reviews[s.reviews.length - 1] : null;
+                    return `
+                    <div class="p-5 rounded-2xl bg-stage-dark/90 border border-purple-900/50 hover:border-stage-gold/60 transition space-y-3 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono text-xs font-bold text-stage-gold bg-purple-900/30 px-2 py-0.5 rounded border border-purple-800/40">
+                                ${s.time}
+                            </span>
+                            <span class="text-xs font-black text-stage-gold flex items-center gap-1 bg-stage-gold/15 px-2.5 py-1 rounded-lg border border-stage-gold/30">
+                                ⭐ ${r.formattedAvg} <span class="text-[10px] text-purple-300 font-normal">(${r.count})</span>
+                            </span>
+                        </div>
+                        <div>
+                            <h4 class="text-base font-extrabold text-white">${s.performer}</h4>
+                            <p class="text-xs text-purple-300/70">${s.genre} • ${s.status}</p>
+                        </div>
+                        ${latestRev ? `<p class="text-[11px] text-purple-300 italic bg-purple-950/50 p-2 rounded-xl border border-purple-900/40 truncate">"${latestRev}"</p>` : ''}
+                        <button onclick="openRatingModal('${s.id}')" class="w-full py-2.5 bg-gradient-to-r from-stage-gold/20 to-purple-900/40 hover:from-stage-gold hover:to-amber-500 hover:text-slate-950 text-stage-gold font-bold text-xs rounded-xl border border-stage-gold/40 transition flex items-center justify-center gap-1.5 shadow">
+                            <i class="ph-bold ph-star text-base"></i> Rate This Comedian
+                        </button>
+                    </div>
+                `}).join('');
+            }
         }
 
         // ================= NAVIGATION / TAB SWITCHING =================
